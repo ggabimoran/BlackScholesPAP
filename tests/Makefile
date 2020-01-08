@@ -2,9 +2,9 @@ BINARIES_DIR = bin
 
 CC = g++
 
-all : test.out
+all : tests.out
 
-test.out : ../$(BINARIES_DIR)/tests.o ../$(BINARIES_DIR)/math.o 
+tests.out : ../$(BINARIES_DIR)/tests.o ../$(BINARIES_DIR)/math.o ../$(BINARIES_DIR)/option.o ../$(BINARIES_DIR)/heatpde1d.o
 	$(CC) $^ -o $@
 
 ../$(BINARIES_DIR)/tests.o : tests.cpp  
