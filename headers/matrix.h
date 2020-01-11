@@ -1,6 +1,9 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <iostream> //for testing
+#include <vector>
+
 namespace master{
   class BMatrix{
   protected:
@@ -28,23 +31,29 @@ namespace master{
     VectorColumn& operator= (const VectorColumn&);
   };
   class Matrix_Sparse : public BMatrix{
+  protected:
+    int *start_;
+    std::vector<int> idx_;
+    std::vector<double> val_;
+  public:
     Matrix_Sparse(unsigned int,unsigned int);
     ~Matrix_Sparse() override;
-    virtual double operator() (unsigned int,unsigned int) const=0;
-    virtual double& operator() (unsigned int,unsigned int)=0;
+    virtual double operator() (unsigned int,unsigned int) const override final;
+    virtual double& operator() (unsigned int,unsigned int) override final;
   };
   class Square_Matrix_Sparse : public Matrix_Sparse{
   public:
     Square_Matrix_Sparse(unsigned int);
-    ~Square_Matrix_Sparse() override;
-    double operator() (unsigned int,unsigned int) const override final;
-    double& operator() (unsigned int,unsigned int) override final;
-    Square_Matrix_Sparse& inv() const;
+    ~Square_Matrix_Sparse() override {};
+    virtual const Matrix_Sparse& inv() const=0;
+  };
+  class TriDiag_Matrix_Sparse : public Square_Matrix_Sparse{
+  public:
+    TriDiag_Matrix_Sparse(unsigned int);
+    ~TriDiag_Matrix_Sparse() override {};
+    const Matrix_Sparse& inv() const override final;
   };
   class VectorColumn_Sparse : public Matrix_Sparse{
-  private:
-    double operator() (unsigned int,unsigned int) const override final;
-    double& operator() (unsigned int,unsigned int) override final;
   public:
     VectorColumn_Sparse(unsigned int);
     ~VectorColumn_Sparse() override;
@@ -57,7 +66,14 @@ namespace master{
   VectorColumn& operator+(const VectorColumn_Sparse&,const VectorColumn&);
   VectorColumn& operator-(const VectorColumn&,const VectorColumn_Sparse&);
   VectorColumn& operator-(const VectorColumn_Sparse&,const VectorColumn&);
-  VectorColumn& operator*(const Square_Matrix_Sparse&,const VectorColumn&);
+  VectorColumn& operator*(const TriDiag_Matrix_Sparse&,const VectorColumn&);
+  VectorColumn& operator*(const Matrix_Sparse&,const VectorColumn&);
+  //for testing
+  std::ostream& operator<<(std::ostream&,const VectorColumn&);
+  std::ostream& operator<<(std::ostream&,const VectorColumn_Sparse&);
+  std::ostream& operator<<(std::ostream&,const TriDiag_Matrix_Sparse&);
 }
+
+
 
 #endif

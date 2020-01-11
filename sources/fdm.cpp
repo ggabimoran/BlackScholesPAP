@@ -20,7 +20,7 @@ namespace master{
     dx_=maxx_/N;
     dt_=maxt_/M;
     lambda_=dt_/Math::pow(dx_,2);//time c squared to be determined
-    Square_Matrix_Sparse A{N-1};
+    TriDiag_Matrix_Sparse A{N-1};
     pA=&A;
     VectorColumn_Sparse b{N-1};
     pb=&b;
@@ -65,9 +65,9 @@ namespace master{
     dt_=maxt_/M;
     theta_=ppde_->get_pOption()->get_r()*dt_;
     gamma_=Math::pow(ppde_->get_pOption()->get_sigma(),2)*dt_;
-    Square_Matrix_Sparse A{N-1};
+    TriDiag_Matrix_Sparse A{N-1};
     pA=&A;
-    Square_Matrix_Sparse B{N-1};
+    TriDiag_Matrix_Sparse B{N-1};
     pB=&B;
     VectorColumn_Sparse b{N-1};
     pb=&b;

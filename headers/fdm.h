@@ -90,7 +90,7 @@ namespace master{
     /**
      *\var pointers to implicit matrice and vector
      */
-    Square_Matrix_Sparse *pA;
+    TriDiag_Matrix_Sparse *pA;
     VectorColumn_Sparse *pb;
     /**
      *\fn intialize_matrices()
@@ -134,7 +134,7 @@ namespace master{
     /**
      *\var pointers to Crank-Nicholson matrices and vector
      */
-    Square_Matrix_Sparse *pA,*pB;
+    TriDiag_Matrix_Sparse *pA,*pB;
     VectorColumn_Sparse *pb;
     /**
      *\fn intialize_matrices()
