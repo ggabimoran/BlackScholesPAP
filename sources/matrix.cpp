@@ -87,6 +87,16 @@ namespace master{
       }
     }
   }
+  Matrix_Sparse::Matrix_Sparse(const Matrix_Sparse& sm)
+    :BMatrix(sm.get_nl(),sm.get_nc())
+  {
+    start_ = new int[nl_]{};
+    for (int i=0;i<nl_;i++){
+      start_[i]=sm.start_[i];
+    }
+    val_=sm.val_;
+    idx_=sm.idx_;
+  }
   Matrix_Sparse::~Matrix_Sparse() {delete[] start_;}
   double Matrix_Sparse::operator() (unsigned int l,unsigned int c) const {
     if (l>=nl_ || c >= nc_) throw "index out of range";
@@ -113,6 +123,48 @@ namespace master{
       }
       return val_[j];
   }
+  Matrix_Sparse& Matrix_Sparse::operator= (const Matrix_Sparse& sm){
+    delete[] start_;
+    nl_=sm.get_nl();
+    nc_=sm.get_nc();
+    start_ = new int[nl_]{};
+    for (int i=0;i<nl_;i++){
+      start_[i]=sm.start_[i];
+    }
+    val_=sm.val_;
+    idx_=sm.idx_;
+    return *this;
+  }
+  Matrix_Sparse& Matrix_Sparse::operator= (const FullMatrix& fm){
+    delete[] start_;
+    nl_=fm.get_nl();
+    nc_=fm.get_nc();
+    start_ = new int[nl_]{};
+    val_=std::vector<double>{};
+    idx_=std::vector<int>{};
+    bool line_started=false;
+    bool one_non_null=false;
+    for (int i=0;i<fm.get_nl();i++){
+      line_started=false;
+      for (int j=0;j<fm.get_nc();j++){
+	if (fm(i,j)!=0){
+	  val_.push_back(fm(i,j));
+	  idx_.push_back(j);
+	  if (!line_started){
+	    start_[i]=idx_.size()-1;
+	    line_started=true;
+	  }
+	  if (one_non_null){
+	    for (int k=i+1;k<nl_;k++){
+	      start_[k]+=1;
+	    }
+	  }
+	  one_non_null=true;
+	}
+      }
+    }
+    return *this;
+  }
   TriDiag_Matrix_Sparse::TriDiag_Matrix_Sparse(const FullMatrix& fm)
     :Matrix_Sparse(fm){
     for (int i=0;i<nl_;i++){
@@ -121,7 +173,20 @@ namespace master{
       }
     }
   }
-
+  TriDiag_Matrix_Sparse::TriDiag_Matrix_Sparse(const TriDiag_Matrix_Sparse& sm)
+    :Matrix_Sparse{sm}{}
+  TriDiag_Matrix_Sparse& TriDiag_Matrix_Sparse::operator= (const TriDiag_Matrix_Sparse& tm){
+    delete[] start_;
+    nl_= tm.nl_;
+    nc_=tm.nc_;
+    start_ = new int[nl_]{};
+    for (int i=0;i<nl_;i++){
+      start_[i]=tm.start_[i];
+    }
+    val_=tm.val_;
+    idx_=tm.idx_;
+    return *this;
+  }
   VectorColumn solInf(const TriDiag_Matrix_Sparse& tm,const VectorColumn& v){
     unsigned int n=v.get_size();
     VectorColumn sol{n};
@@ -167,8 +232,6 @@ namespace master{
     }
     const TriDiag_Matrix_Sparse sL{L};
     const TriDiag_Matrix_Sparse sU{U};
-    std::cout<<sL<<'\n';
-    std::cout<<sU<<'\n';
     VectorColumn y{solInf(sL,v)};
     return solSup(sU,y);
   }

@@ -1,6 +1,7 @@
 #include "../headers/option.h"
 #include "../headers/heatpde1d.h"
 #include "../headers/matrix.h"
+#include "../headers/fdm.h"
 
 #include <iostream>
 

@@ -45,16 +45,21 @@ namespace master{
     int *start_;
     std::vector<int> idx_;
     std::vector<double> val_;
+    virtual double& operator() (unsigned int,unsigned int) override final;
   public:
     Matrix_Sparse(const FullMatrix&);
+    Matrix_Sparse(const Matrix_Sparse&);
     ~Matrix_Sparse() override;
     virtual double operator() (unsigned int,unsigned int) const override final;
-    virtual double& operator() (unsigned int,unsigned int) override final;
+    Matrix_Sparse& operator= (const Matrix_Sparse&);
+    Matrix_Sparse& operator= (const FullMatrix&);
   };
   class TriDiag_Matrix_Sparse : public Matrix_Sparse{
   public:
     TriDiag_Matrix_Sparse(const FullMatrix&);
+    TriDiag_Matrix_Sparse(const TriDiag_Matrix_Sparse&);
     ~TriDiag_Matrix_Sparse() override {};
+    TriDiag_Matrix_Sparse& operator= (const TriDiag_Matrix_Sparse&);
   };
 
   VectorColumn resolutionLUTriDiag(const TriDiag_Matrix_Sparse&,const VectorColumn&);

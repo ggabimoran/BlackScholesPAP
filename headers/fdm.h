@@ -9,6 +9,7 @@
 
 #include "heatpde1d.h"
 #include "matrix.h"
+#include <vector>
 
 /**
  *\namespace master
@@ -26,6 +27,9 @@ namespace master{
     *\brief fdm execution function
     */
     virtual void execute() = 0;
+    VectorColumn get_result() const{return *pnew_result;}
+    double get_dx() const{return dx_;}
+    double get_dt() const{return dt_;}
   protected:
     /**
      *\fn FDM(unsigned long,unsigned long)
@@ -38,7 +42,7 @@ namespace master{
      *\fn ~FDM()
      *\brief destructor
      */
-    virtual ~FDM(){}
+    virtual ~FDM();
     /**
      *\var minx_,maxx_ space interval min and max
      *\var mint_,maxt_ time interval min and max
@@ -55,11 +59,6 @@ namespace master{
      *\var pold_result previous iteration result for pde approximation
      */
     VectorColumn *pnew_result,*pold_result;
-    /**
-     *\fn initialize_matrices()
-     *\brief initialize fdm matrices
-     */
-    virtual void initialize_matrices() = 0;
   };
   /**
    *\class FDMImplicit
@@ -72,7 +71,7 @@ namespace master{
      *\fn ~FDMImplicit()
      *\brief overrided destructor
      */
-    ~FDMImplicit() override{}
+    ~FDMImplicit() override;
     /**
      *\fn execute()
      *\brief overrided execute()
@@ -86,17 +85,12 @@ namespace master{
     /**
      *\var lambda_ implicit parameters
      */
-    double lambda_;
+    std::vector<double> lambda_;
     /**
      *\var pointers to implicit matrice and vector
      */
     TriDiag_Matrix_Sparse *pA;
-    VectorColumn_Sparse *pb;
-    /**
-     *\fn intialize_matrices()
-     *\brief overrided initialize_matrices()
-     */
-    void initialize_matrices() override final;
+    VectorColumn *pb;
   };
   /**
    *\class FDMCrankNicholson
@@ -116,7 +110,7 @@ namespace master{
      *\fn ~FDMCrankNicholson()
      *\brief overrided destructor
      */
-    ~FDMCrankNicholson() override{}
+    ~FDMCrankNicholson() override;
     /**
      *\fn execute()
      *\brief overrided execute()
@@ -135,12 +129,7 @@ namespace master{
      *\var pointers to Crank-Nicholson matrices and vector
      */
     TriDiag_Matrix_Sparse *pA,*pB;
-    VectorColumn_Sparse *pb;
-    /**
-     *\fn intialize_matrices()
-     *\brief overrided initialize_matrices()
-     */
-    void initialize_matrices() override final;
+    VectorColumn *pb;
   };
 }
 
