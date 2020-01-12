@@ -1,4 +1,3 @@
-#include "../headers/math.h"
 #include "../headers/heatpde1d.h"
 
 namespace master{

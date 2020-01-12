@@ -1,5 +1,5 @@
 #include "../headers/fdm.h"
-#include "../headers/math.h"
+#include <cmath>
 
 namespace master{
   FDM::FDM(unsigned int M,unsigned int N)
@@ -19,7 +19,7 @@ namespace master{
     maxt_=ppde_->get_pOption()->get_T();
     dx_=maxx_/N;
     dt_=maxt_/M;
-    lambda_=dt_/Math::pow(dx_,2);//time c squared to be determined
+    lambda_=dt_/std::pow(dx_,2);//time c squared to be determined
     TriDiag_Matrix_Sparse A{N-1};
     pA=&A;
     VectorColumn_Sparse b{N-1};
@@ -64,7 +64,7 @@ namespace master{
     dx_=maxx_/N;
     dt_=maxt_/M;
     theta_=ppde_->get_pOption()->get_r()*dt_;
-    gamma_=Math::pow(ppde_->get_pOption()->get_sigma(),2)*dt_;
+    gamma_=std::pow(ppde_->get_pOption()->get_sigma(),2)*dt_;
     TriDiag_Matrix_Sparse A{N-1};
     pA=&A;
     TriDiag_Matrix_Sparse B{N-1};
@@ -81,16 +81,16 @@ namespace master{
     }
     //initialization of B
     for (unsigned int j=0;j<pB->get_nl();j++){
-      (*pB)(j,j) = theta_/2-1+gamma_*Math::pow(j,2);
-      if (j>0) (*pB)(j-1,j) = -theta_/4*j-gamma_/2*Math::pow(j,2);
-      if (j<(pB->get_nl()-1)) (*pB)(j+1,j) = theta_/4*j-gamma_*Math::pow(j,2);
+      (*pB)(j,j) = theta_/2-1+gamma_*std::pow(j,2);
+      if (j>0) (*pB)(j-1,j) = -theta_/4*j-gamma_/2*std::pow(j,2);
+      if (j<(pB->get_nl()-1)) (*pB)(j+1,j) = theta_/4*j-gamma_*std::pow(j,2);
     }
     //initialization of u^n+1
     for (unsigned int k=0;k<pold_result->get_nl();k++) {
       (*pold_result)[k]=ppde_->initial_boundary(minx_+(k+1)*dx_);
     }
     //initialization of b
-    (*pb)[N_-2] = theta_/4*N_*ppde_->upper_boundary(maxt_)+(theta_/4*N_* + gamma_/2 * Math::pow(N_,2))*ppde_->upper_boundary(maxt_-dt_);   
+    (*pb)[N_-2] = theta_/4*N_*ppde_->upper_boundary(maxt_)+(theta_/4*N_* + gamma_/2 * std::pow(N_,2))*ppde_->upper_boundary(maxt_-dt_);   
   }
   void FDMCrankNicholson::execute(){
     initialize_matrices();
@@ -99,7 +99,7 @@ namespace master{
     while (curr_t>0){
       prev_t = curr_t;
       curr_t -= dt_;
-      (*pb)[N_-2] = theta_/4*N_*ppde_->upper_boundary(prev_t)+(theta_/4*N_* + gamma_/2 * Math::pow(N_,2))*ppde_->upper_boundary(curr_t); ;
+      (*pb)[N_-2] = theta_/4*N_*ppde_->upper_boundary(prev_t)+(theta_/4*N_* + gamma_/2 * std::pow(N_,2))*ppde_->upper_boundary(curr_t); ;
       VectorColumn tempvect = *pnew_result;
       *pnew_result = pB->inv() * ((*pA * *pold_result) + *pb);
       *pold_result = tempvect;

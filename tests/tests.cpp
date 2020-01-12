@@ -1,57 +1,11 @@
-#include "../headers/math.h"
 #include "../headers/option.h"
 #include "../headers/heatpde1d.h"
+#include "../headers/matrix.h"
 
 #include <iostream>
 
 int main(){
   std::cout<<""<<std::endl;
-  /////////////////////////////////////////////////////////////////////
-  /// testing math functions
-  /////////////////////////////////////////////////////////////////////
-  using master::Math;
-  std::cout<<"max(5,3) = "<<Math::max(5,3)<<'\n';
-  std::cout<<"max(0,0) = "<<Math::max(0,0)<<'\n';
-  std::cout<<"max(-345.7,9876.2) = "<<Math::max(-345.7,9876.2)<<'\n';
-  std::cout<<"max(-5.5,-3.3) = "<<Math::max(-5.5,-3.3)<<'\n';
-  std::cout<<"max(1,4) = "<<Math::max(1,4)<<'\n';
-
-  std::cout<<'\n';
-
-  std::cout<<"abs(5) = "<<Math::abs(5)<<'\n';
-  std::cout<<"abs(-155000000) = "<<Math::abs(-155000000)<<'\n';
-  std::cout<<"abs(358.235455) = "<<Math::abs(358.235455)<<'\n';
-  std::cout<<"abs(-454545) = "<<Math::abs(-454545)<<'\n';
-  std::cout<<"abs(0.) = "<<Math::abs(0.)<<'\n';
-
-  std::cout<<'\n';
-
-  std::cout<<"fact(5) = "<<Math::fact(5)<<'\n';
-  std::cout<<"fact(0) = "<<Math::fact(0)<<'\n';
-  std::cout<<"fact(1) = "<<Math::fact(1)<<'\n';
-  std::cout<<"fact(9) = "<<Math::fact(9)<<'\n';
-  std::cout<<"fact(3) = "<<Math::fact(3)<<'\n';
-
-  std::cout<<'\n';
-
-  std::cout<<"pow(0.,0) = "<<Math::pow(0.,0)<<'\n';
-  std::cout<<"pow(0,1) = "<<Math::pow(0,1)<<'\n';
-  std::cout<<"pow(2.,3) = "<<Math::pow(2.,3)<<'\n';
-  std::cout<<"pow(-1,3) = "<<Math::pow(-1,3)<<'\n';
-  std::cout<<"pow(0.8,2) = "<<Math::pow(0.8,2)<<'\n';
-
-
-  std::cout<<'\n';
-
-  std::cout<<"exp(0.) = "<<Math::exp(0.)<<'\n';
-  std::cout<<"exp(1.) = "<<Math::exp(1.)<<'\n';
-  std::cout<<"exp(0.5) = "<<Math::exp(0.5)<<'\n';
-  std::cout<<"exp(-1.) = "<<Math::exp(-1.)<<'\n';
-  std::cout<<"exp(-0.5) = "<<Math::exp(-0.5)<<'\n';
-
-  
-  std::cout<<'\n';
-  
   
   try{
     /////////////////////////////////////////////////////////////////////
@@ -97,6 +51,55 @@ int main(){
     std::cout<<"pdeC.initial_boundary(150) : "<<pdeC.initial_boundary(150)<<'\n';
     std::cout<<"pdeC.lower_boundary(0.5) : "<<pdeC.lower_boundary(0.5)<<'\n';
     std::cout<<"pdeC.get_pOption() == &callOption : "<<(pdeC.get_pOption() == &callOption)<<'\n';
+
+    std::cout<<'\n';
+
+    /////////////////////////////////////////////////////////////////////
+    /// testing matrix functions
+    /////////////////////////////////////////////////////////////////////
+    using master::FullMatrix;
+    using master::TriDiag_Matrix_Sparse;
+    using master::VectorColumn;
+    
+
+    FullMatrix fm{5,5};
+    VectorColumn v{5};
+    VectorColumn v2{5};
+
+    fm(4,3)=1;
+    fm(2,3)=3;
+    fm(0,0)=2;
+    fm(1,1)=3;
+    fm(1,0)=3;
+    fm(1,2)=2;
+    fm(3,4)=3;
+    fm(2,2)=5;
+    fm(0,1)=5;
+
+    v[1]=3;
+    v[4]=2;
+    v[2]=-1;
+    v[3]=1;
+    v2[0]=1;
+    v2[1]=1;
+    v2[2]=1;
+    v2[3]=1;
+    v2[4]=1;
+
+    const TriDiag_Matrix_Sparse tm{fm};
+
+    fm(0,4)=3;
+    fm(4,0)=9;
+    fm(3,0)=12;
+
+    std::cout<<fm<<"\n";
+
+    std::cout<<tm<<"\n";
+    std::cout<<v<<"\n";
+    //std::cout<<v+v2<<'\n';
+    //std::cout<<v-v2<<'\n';
+    std::cout<<fm*v2<<'\n';
+    std::cout<<tm*v<<'\n';
   }
   catch (const char *exception) {
     std::cerr<<"Error : "<<exception<<'\n';

@@ -1,5 +1,6 @@
-#include "../headers/math.h"
 #include "../headers/option.h"
+#include <cmath>
+#include <algorithm>
 
 namespace master{
   Option::Option(double K,double T,double sigma,double r,double L)
@@ -9,9 +10,9 @@ namespace master{
     if (K >= L) throw "max value L of underlying asset must be greater than K";
     if (T <= 0) throw "time to maturity must be strictly positive";
     if (sigma <= 0) throw "volatility sigma must be strictly positive";
-    if (Math::abs(r)>=1) throw "risk-free interest rate must be less than 1 in absolute value";
-    alpha_ = (r_ - Math::pow(sigma_,2) / 2)/Math::pow(sigma_,2);
-    beta_ = Math::pow(r_ - Math::pow(sigma_,2) / 2,2)/(2*Math::pow(sigma_,2)) + r_;
+    if (std::abs(r)>=1) throw "risk-free interest rate must be less than 1 in absolute value";
+    alpha_ = (r_ - std::pow(sigma_,2) / 2)/std::pow(sigma_,2);
+    beta_ = std::pow(r_ - std::pow(sigma_,2) / 2,2)/(2*std::pow(sigma_,2)) + r_;
   }
 
   
@@ -19,11 +20,11 @@ namespace master{
     : Option(K,T,sigma,r,L) {}
   double CallOption::payoff(double S) const{
     if (S<0) throw "asset S must have positive value";
-    return Math::max(S-K_,0.);
+    return std::max(S-K_,0.);
   }
   double CallOption::upper_spatial_time_value(double t) const{
     if (t<0||t>T_) throw "time t must be valid";
-    return L_-K_*Math::exp(-r_*(T_-t));
+    return L_-K_*std::exp(-r_*(T_-t));
   }
   double CallOption::lower_spatial_time_value(double t) const{
     if (t<0||t>T_) throw "time t must be valid";
@@ -39,7 +40,7 @@ namespace master{
     : Option(K,T,sigma,r,L) {}
   double PutOption::payoff(double S) const{
     if (S<0) throw "asset S must have positive value";
-    return Math::max(K_-S,0.);
+    return std::max(K_-S,0.);
   }
   double PutOption::upper_spatial_time_value(double t) const{
     if (t<0||t>T_) throw "time t must be valid";
@@ -47,7 +48,7 @@ namespace master{
   }
   double PutOption::lower_spatial_time_value(double t) const{
     if (t<0||t>T_) throw "time t must be valid";
-    return K_*Math::exp(-r_*(T_-t));
+    return K_*std::exp(-r_*(T_-t));
   }
   //TODO
   double PutOption::heat_payoff(double S) const{return S;}
