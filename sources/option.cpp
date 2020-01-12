@@ -30,10 +30,15 @@ namespace master{
     if (t<0||t>T_) throw "time t must be valid";
     return 0;
   }
-  //TODO
-  double CallOption::heat_payoff(double S) const{return S;}
-  double CallOption::heat_upper_spatial_time_value(double S) const{return S;}
-  double CallOption::heat_lower_spatial_time_value(double S) const{return S;}
+  double CallOption::heat_payoff(double s_tilde) const{
+    return std::exp(alpha_*s_tilde)*std::max(K_-std::exp(s_tilde),0.);
+  }
+  double CallOption::heat_upper_spatial_time_value(double t_tilde) const{
+    return std::pow(L_,alpha_)*(L_-K_*std::exp(-r_*t_tilde))*std::exp(beta_*t_tilde);
+  }
+  double CallOption::heat_lower_spatial_time_value(double t_tilde) const{
+    return 0;
+  }
 
   
   PutOption::PutOption(double K,double T,double sigma,double r,double L)
@@ -50,8 +55,13 @@ namespace master{
     if (t<0||t>T_) throw "time t must be valid";
     return K_*std::exp(-r_*(T_-t));
   }
-  //TODO
-  double PutOption::heat_payoff(double S) const{return S;}
-  double PutOption::heat_upper_spatial_time_value(double S) const{return S;}
-  double PutOption::heat_lower_spatial_time_value(double S) const{return S;}
+  double PutOption::heat_payoff(double s_tilde) const{
+    return std::exp(alpha_*s_tilde)*std::max(std::exp(s_tilde)-K_,0.);
+  }
+  double PutOption::heat_upper_spatial_time_value(double t_tilde) const{
+    return 0;
+  }
+  double PutOption::heat_lower_spatial_time_value(double t_tilde) const{
+    return 0;
+  }
 }
