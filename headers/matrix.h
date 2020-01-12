@@ -57,7 +57,9 @@ namespace master{
     ~TriDiag_Matrix_Sparse() override {};
   };
 
-  VectorColumn ResolutionLUTriDiag(const TriDiag_Matrix_Sparse&,const VectorColumn&);
+  VectorColumn resolutionLUTriDiag(const TriDiag_Matrix_Sparse&,const VectorColumn&);
+  VectorColumn solInf(const TriDiag_Matrix_Sparse&,const VectorColumn&);
+  VectorColumn solSup(const TriDiag_Matrix_Sparse&,const VectorColumn&);
   
 
   VectorColumn operator+(const VectorColumn&,const VectorColumn&);

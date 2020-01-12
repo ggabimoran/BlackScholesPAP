@@ -122,6 +122,57 @@ namespace master{
     }
   }
 
+  VectorColumn solInf(const TriDiag_Matrix_Sparse& tm,const VectorColumn& v){
+    unsigned int n=v.get_size();
+    VectorColumn sol{n};
+    sol[0]=v[0]/tm(0,0);
+    for (int i=1;i<n;i++){
+      sol[i]=(v[i]-tm(i,i-1)*sol[i-1])/tm(i,i);
+    }
+    return sol;
+  }
+
+  VectorColumn solSup(const TriDiag_Matrix_Sparse& tm,const VectorColumn& v){
+    unsigned int n=v.get_size();
+    VectorColumn sol{n};
+    sol[n-1]=v[n-1]/tm(n-1,n-1);
+    for (int i=n-2;i>=0;i--){
+      sol[i]=(v[i]-tm(i,i+1)*sol[i+1])/tm(i,i);
+    }
+    return sol;
+  }
+
+  VectorColumn resolutionLUTriDiag(const TriDiag_Matrix_Sparse& tm,const VectorColumn& v){
+    unsigned int n=v.get_size();
+    std::vector<double> delta;
+    delta.push_back(1);
+    delta.push_back(tm(0,0));
+    for (int k=2;k<=n;k++){
+      delta.push_back(tm(k-1,k-1)*delta[k-1]-tm(k-1,k-2)*tm(k-2,k-1)*delta[k-2]);
+      if (delta[k]==0) throw "LU decomposition impossible";
+    }
+    FullMatrix L{n,n};
+    FullMatrix U{n,n};
+    L(0,0)=1;
+    L(n-1,n-1)=1;
+    L(n-1,n-2)=tm(n-1,n-2)*delta[n-2]/delta[n-1];
+    U(0,0)=delta[1]/delta[0];
+    U(0,1)=tm(0,1);
+    U(n-1,n-1)=delta[n]/delta[n-1];
+    for (int i=1;i<n-1;i++){
+      L(i,i)=1;
+      L(i,i-1)=tm(i,i-1)*delta[i-1]/delta[i];
+      U(i,i)=delta[i+1]/delta[i];
+      U(i,i+1)=tm(i,i+1);
+    }
+    const TriDiag_Matrix_Sparse sL{L};
+    const TriDiag_Matrix_Sparse sU{U};
+    std::cout<<sL<<'\n';
+    std::cout<<sU<<'\n';
+    VectorColumn y{solInf(sL,v)};
+    return solSup(sU,y);
+  }
+
   VectorColumn operator+(const VectorColumn& v1,const VectorColumn& v2){
     if (v1.same_size(v2)){
       VectorColumn newv{v1.get_nl()};

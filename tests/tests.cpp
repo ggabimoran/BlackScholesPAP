@@ -72,6 +72,8 @@ int main(){
     fm(1,1)=3;
     fm(1,0)=3;
     fm(1,2)=2;
+    fm(3,3)=1;
+    fm(3,2)=2;
     fm(3,4)=3;
     fm(2,2)=5;
     fm(0,1)=5;
@@ -92,14 +94,15 @@ int main(){
     fm(4,0)=9;
     fm(3,0)=12;
 
-    std::cout<<fm<<"\n";
+    //std::cout<<fm<<"\n";
 
     std::cout<<tm<<"\n";
     std::cout<<v<<"\n";
     //std::cout<<v+v2<<'\n';
     //std::cout<<v-v2<<'\n';
-    std::cout<<fm*v2<<'\n';
-    std::cout<<tm*v<<'\n';
+    //std::cout<<fm*v2<<'\n';
+    //std::cout<<tm*v<<'\n';
+    std::cout<<resolutionLUTriDiag(tm,v)<<'\n';
   }
   catch (const char *exception) {
     std::cerr<<"Error : "<<exception<<'\n';
